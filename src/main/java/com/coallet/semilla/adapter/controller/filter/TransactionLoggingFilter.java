@@ -19,6 +19,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Order(200)
 public class TransactionLoggingFilter extends OncePerRequestFilter {
 
+    private static final String PATTERN_DATE = "yyMMddhh";
+    private static final String KEY_TRANSACTION_LOGGER = "transaction-id";
     private static final String BASE_LONG_VALUE_LENGTH_8 = "00000000";
     private static final int TOP_LONG_VALUE_LENGTH_12 = 999_999_999;
 
@@ -27,18 +29,18 @@ public class TransactionLoggingFilter extends OncePerRequestFilter {
         FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            MDC.put("transaction-id", generateTransactionId());
+            MDC.put(KEY_TRANSACTION_LOGGER, generateTransactionId());
 
             filterChain.doFilter(request, response);
         } finally {
-            MDC.remove("transaction-id");
+            MDC.remove(KEY_TRANSACTION_LOGGER);
         }
     }
 
     private String generateTransactionId() {
         var random = new SecureRandom();
 
-        var formatter = new SimpleDateFormat("yyMMddhh");
+        var formatter = new SimpleDateFormat(PATTERN_DATE);
 
         Long transactionId =
             Long.parseLong(join(formatter.format(new Date()), BASE_LONG_VALUE_LENGTH_8)) +

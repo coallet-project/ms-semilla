@@ -1,0 +1,10 @@
+## Spring configuration
+spring:
+  application.name: ms-semilla
+  messages:
+    basename: ${i18n.general}
+    encoding: UTF-8
+
+## Internationalization ubication
+i18n:
+  general: internationalization/general
